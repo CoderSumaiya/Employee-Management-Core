@@ -1,0 +1,161 @@
+﻿
+
+@model IEnumerable<DepartmentHeadCount>
+
+<div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+    <div class="card-header bg-gradient bg-primary text-white p-4 border-0">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-0 fw-bold"><i class="bi bi-graph-up-arrow me-2"></i>Departmental Insights</h4>
+                <p class="mb-0 small opacity-75">Visualizing organization structure & financial audit</p>
+            </div>
+            <div class="text-end">
+                <span class="badge bg-white text-primary rounded-pill px-3 py-2 shadow-sm">
+                    Total Dept: @Model.Count()
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 custom-table">
+            <thead class="bg-light">
+                <tr class="text-secondary text-uppercase small letter-spacing-1">
+                    <th class="ps-4 py-3" style="width: 8%">ID</th>
+                    <th style="width: 32%">Department Info</th>
+                    <th class="text-center">Staff Strength</th>
+                    <th class="text-end">Monthly Payroll</th>
+                    <th class="text-end pe-4">Recent Inflow</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="transition-all">
+                        <td class="ps-4">
+                            <div class="dept-id-badge">#@item.DepartmentId</div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="dept-icon bg-light-primary text-primary me-3">
+                                    <i class="bi bi-building"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold text-dark">@item.DepartmentName</h6>
+                                    <span class="text-muted extra-small">Operational Unit</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="progress-container mx-auto" style="width: 80px;">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <span class="fw-bold text-primary">@item.Count</span>
+                                    <small class="ms-1 text-muted">Users</small>
+                                </div>
+                                <div class="progress mt-1" style="height: 4px;">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: @(item.Count * 10)%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <div class="fw-bold text-dark">@item.TotalSalary.ToString("N0") <span class="text-success small">৳</span></div>
+                            <span class="text-muted extra-small">Gross Total</span>
+                        </td>
+                        <td class="text-end pe-4">
+                            <span class="joining-date-chip">
+                                <i class="bi bi-calendar-event me-1"></i>
+                                @(item.JoiningDate.ToString("MMM dd, yyyy") ?? "N/A")
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+            @if (Model != null && Model.Any())
+            {
+                <tfoot class="border-top-0">
+                    <tr class="bg-dark text-white footer-row shadow-sm">
+                        <td colspan="2" class="ps-4 py-4 text-uppercase fw-light letter-spacing-2">Grand Analytics Total</td>
+                        <td class="text-center">
+                            <div class="total-count-pill">@Model.Sum(x => x.Count) Staff</div>
+                        </td>
+                        <td class="text-end py-4">
+                            <h5 class="mb-0 fw-bold text-warning">@Model.Sum(x => x.TotalSalary).ToString("N2") ৳</h5>
+                        </td>
+                        <td class="pe-4"></td>
+                    </tr>
+                </tfoot>
+            }
+        </table>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(45deg, #2b5876, #4e4376);
+    }
+
+    .letter-spacing-1 {
+        letter-spacing: 1px;
+    }
+
+    .letter-spacing-2 {
+        letter-spacing: 2px;
+    }
+
+    .extra-small {
+        font-size: 0.75rem;
+    }
+
+    .custom-table tbody tr:hover {
+        background-color: #f8fbff !important;
+        transform: scale(1.005);
+        transition: all 0.2s ease-in-out;
+    }
+
+    .dept-id-badge {
+        background: #f0f2f5;
+        color: #5c636a;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-block;
+    }
+
+    .dept-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 1.2rem;
+    }
+
+    .bg-light-primary {
+        background: #e7f1ff;
+    }
+
+    .joining-date-chip {
+        background: #f8f9fa;
+        border: 1px solid #eee;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+
+    .footer-row {
+        border-bottom-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+    }
+
+    .total-count-pill {
+        background: rgba(255,255,255,0.1);
+        border: 1px border rgba(255,255,255,0.2);
+        padding: 6px 15px;
+        border-radius: 50px;
+        display: inline-block;
+    }
+</style>

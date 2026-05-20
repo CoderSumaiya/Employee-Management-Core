@@ -1,0 +1,106 @@
+﻿
+@{
+    ViewBag.Title = "Employee Dashboard";
+}
+
+<div class="dashboard-container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold text-dark">Employee Report Overview</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="stat-card shadow-sm p-4 bg-white border-0">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Total Employees</p>
+                        <h2 class="fw-bold">182</h2>
+                    </div>
+                    <div class="icon-circle bg-light-orange text-orange">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                </div>
+                <button class="btn btn-orange btn-sm w-100 mt-3 rounded-pill">View All List</button>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="stat-card shadow-sm p-4 bg-white border-0">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Departments</p>
+                        <h2 class="fw-bold">14</h2>
+                    </div>
+                    <div class="icon-circle bg-light-green text-green">
+                        <i class="bi bi-building"></i>
+                    </div>
+                </div>
+                <button class="btn btn-green btn-sm w-100 mt-3 rounded-pill">Manage Teams</button>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="stat-card shadow-sm p-4 bg-white border-0 h-100">
+                <div class="d-flex justify-content-between">
+                    <p class="text-muted">Total working hours</p>
+                    <span class="badge bg-light text-dark">Week</span>
+                </div>
+                <h3 class="fw-bold">37 hours <span class="text-success fs-6 fw-normal ms-2">Avg. 148h/ month</span></h3>
+                <div class="d-flex align-items-end justify-content-between mt-4" style="height: 100px;">
+                    <div class="bar" style="height: 60%; background-color: #ff9f43;"></div>
+                    <div class="bar" style="height: 80%; background-color: #ff9f43;"></div>
+                    <div class="bar" style="height: 40%; background-color: #ff9f43;"></div>
+                    <div class="bar" style="height: 90%; background-color: #ff9f43;"></div>
+                    <div class="bar" style="height: 50%; background-color: #ff9f43;"></div>
+                    <div class="bar" style="height: 70%; background-color: #ff9f43;"></div>
+                    <div class="bar" style="height: 30%; background-color: #ff9f43;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="stat-card shadow-sm p-4 bg-white border-0">
+                <h5 class="fw-bold mb-4">Quick Actions</h5>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="action-box text-center p-3 rounded" style="background-color: #fff4e5;">
+                            <h6 class="mb-0 text-orange">Payroll</h6>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="action-box text-center p-3 rounded" style="background-color: #e5f9f6;">
+                            <h6 class="mb-0 text-green">Attendance</h6>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="action-box text-center p-3 rounded" style="background-color: #fff9e5;">
+                            <h6 class="mb-0 text-warning">Vacation</h6>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="action-box text-center p-3 rounded" style="background-color: #e5f4ff;">
+                            <h6 class="mb-0 text-primary">Benefits</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="stat-card shadow-sm p-4 bg-white border-0">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold">Monthly Expenditure</h5>
+                    <span class="text-muted small">Year 2026</span>
+                </div>
+                <h4 class="fw-bold text-dark">$ 12,856.14 <span class="text-muted fs-6 fw-normal">Avg. $3,000/ month</span></h4>
+                <div class="chart-placeholder mt-3" style="height: 150px; background: linear-gradient(to right, #f8f9fa, #e9ecef); border-radius: 10px;">
+                    <p class="text-center pt-5 text-muted small">Interactive Salary Trend Chart</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,93 @@
+﻿ 
+@model EmployeeViewModel
+@{
+    Layout = null;
+}
+
+<div class="modal-header">
+    <h5 class="modal-title">Edit Employee</h5>
+</div>
+<div class="modal-body">
+    @using (Html.BeginForm("EditEmployee", "Employees", FormMethod.Post, new { id = "editEmployeeForm", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+     
+        @Html.HiddenFor(m => m.EmployeeId)
+        <input type="hidden" name="OldImageUrl" value="@Model.ImageUrl" />
+
+        <div class="row">
+            <div class="col-md-7">
+                <h4>Employee Information</h4>
+                <div class="form-group mb-2">
+                    @Html.LabelFor(m => m.EmployeeName)
+                    @Html.EditorFor(m => m.EmployeeName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(m => m.EmployeeName, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group mb-2">
+                    @Html.LabelFor(m => m.JoiningDate)
+                    @Html.EditorFor(m => m.JoiningDate, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                    @Html.ValidationMessageFor(m => m.JoiningDate, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group mb-2">
+                    @Html.LabelFor(m => m.Salary)
+                    @Html.EditorFor(m => m.Salary, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(m => m.Salary, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group mb-2">
+                    @Html.LabelFor(m => m.MobileNo)
+                    @Html.EditorFor(m => m.MobileNo, new { htmlAttributes = new { @class = "form-control" } })
+                    @* This span is crucial to show the "Mobile number already exists" error *@
+                    @Html.ValidationMessageFor(m => m.MobileNo, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group mb-2">
+                    @Html.CheckBoxFor(m => m.IsPermanent) @Html.LabelFor(m => m.IsPermanent)
+                </div>
+
+                <div class="form-group mb-2">
+                    @Html.LabelFor(m => m.DepartmentId)
+                    @Html.DropDownListFor(m => m.DepartmentId, new SelectList(Model.Departments, "DepartmentId", "DepartmentName"), "Select Department", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.DepartmentId, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group mb-2">
+                    <img id="imageFile" src="@Url.Content(Model.ImageUrl)" width="100" height="100" class="mb-2" />
+                    <input onchange="readUrl(this)" type="file" name="ProfileFile" id="ProfileFile" class="form-control" />
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <h4>Academic Details</h4>
+                <button onclick="AddAcademic()" type="button" class="btn btn-warning mb-2">Add Academic</button>
+                <table class="table" id="ExTable">
+                    <thead>
+                        <tr>
+                            <th>Degree</th>
+                            <th>CGPA</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.AcademicDetails.Count; i++)
+                        {
+                            <tr>
+                                <td><input type="text" name="AcademicDetails[@i].DegreeName" value="@Model.AcademicDetails[i].DegreeName" class="form-control" /></td>
+                                <td><input type="text" name="AcademicDetails[@i].CGPA" value="@Model.AcademicDetails[i].CGPA" class="form-control" /></td>
+                                <td><button type="button" class="btn btn-danger btn-remove">Remove</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success">Save Changes</button>
+        </div>
+    }
+</div>

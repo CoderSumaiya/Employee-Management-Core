@@ -1,0 +1,276 @@
+﻿
+@model PaginatedList<Employee>
+
+@{
+    ViewData["Title"] = "Employee List";
+}
+
+<div id="modalContainer"></div>
+
+<div class="mt-3 mb-3">
+    <h1>Using Employee View Components</h1>
+    @await Component.InvokeAsync("HeadCount")
+</div>
+
+<button id="btnCreate" class="btn btn-success float-end mb-2">
+    <i class="bi bi-plus-circle"></i> Add New Employee
+</button>
+
+<h1 class="mb-4">Employee Management System</h1>
+
+<div class="card bg-light mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">Search Name</label>
+                <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" class="form-control" placeholder="Employee name..." />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold">Status</label>
+                <select name="searchIsPermanent" class="form-select">
+                    <option value="">-- All Status --</option>
+                    <option value="true" selected="@(ViewData["PermanentFilter"]?.ToString() == "true")">Permanent</option>
+                    <option value="false" selected="@(ViewData["PermanentFilter"]?.ToString() == "false")">Temporary/Probation</option>
+                </select>
+            </div>
+            <div class="col-md-3 pt-4">
+                <button type="submit" class="btn btn-primary px-4">Filter</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Image</th>
+                <th>
+                    <a class="text-white text-decoration-none" asp-action="Index"
+                       asp-route-sortOrder="@ViewData["NameSortParm"]"
+                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                       asp-route-searchIsPermanent="@ViewData["PermanentFilter"]">
+                        Employee Name @(ViewData["CurrentSort"]?.ToString() == "name_desc" ? "↓" : "↑")
+                    </a>
+                </th>
+                <th>Joining Date</th>
+                <th>Mobile No</th>
+                <th>Status</th>
+                <th>Details</th>
+                <th>Academics</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="employee-list-body">
+            @foreach (var item in Model)
+            {
+                <tr data-employee-id="@item.EmployeeId">
+                    <td>
+                        <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? Url.Content("~/images/noimage.png") : Url.Content(item.ImageUrl))"
+                             class="rounded-circle border shadow-sm" width="50" height="50" style="object-fit: cover;" />
+                    </td>
+                    <td class="fw-bold">@item.EmployeeName</td>
+                    <td>@item.JoiningDate.ToString("dd MMM yyyy")</td>
+                    <td>@item.MobileNo</td>
+                    <td>
+                        <span class="badge @(item.IsPermanent ? "bg-success" : "bg-secondary")">
+                            @(item.IsPermanent ? "Permanent" : "Not Permanent")
+                        </span>
+                    </td>
+                    <td>
+                        <div class="small">@item.Department?.DepartmentName</div>
+                        <div class="text-muted smaller">@item.Salary.ToString("C")</div>
+                    </td>
+                    <td>
+                        @foreach (var module in item.AcademicDetails)
+                        {
+                            <span class="badge bg-light text-dark border me-1 mb-1" style="font-size: 0.75rem;">
+                                @module.DegreeName
+                            </span>
+                        }
+                    </td>
+                    <td class="text-center">
+                        <div class="d-flex gap-1">
+                            <a class="btn btn-primary btn-sm edit-btn"
+                               href="@Url.Action("EditPartial", "Employees", new { id = item.EmployeeId })">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <button class="btn btn-danger btn-sm delete-btn"
+                                    data-employee-id="@item.EmployeeId"
+                                    data-employee-name="@item.EmployeeName">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <div class="text-muted small">
+        Showing page <strong>@Model.PageIndex</strong> of <strong>@Model.TotalPages</strong>
+    </div>
+    <nav>
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item @prevDisabled">
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-pageNumber="@(Model.PageIndex - 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   asp-route-searchIsPermanent="@ViewData["PermanentFilter"]" class="page-link">Previous</a>
+            </li>
+            <li class="page-item @nextDisabled">
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-pageNumber="@(Model.PageIndex + 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   asp-route-searchIsPermanent="@ViewData["PermanentFilter"]"
+                   class="page-link">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+
+          
+            $(document).ajaxError(function (event, xhr, settings) {
+                if (xhr.status === 401) {
+              
+                    alert("Your session has expired. Please log in again.");
+                    window.location.href = '/Account/Login';
+                } else if (xhr.status === 403) {
+                   
+                    alert("Access Denied: You do not have permission to perform this action.");
+                }
+            });
+            
+
+       
+            $("#btnCreate").click(function () {
+                $.get('@Url.Action("CreatePartial", "Employees")', function (data) {
+                    $("#modalContainer").html('<div class="modal fade show" style="display:block;" aria-modal="true" role="dialog"><div class="modal-dialog modal-lg"><div class="modal-content">' + data + '</div></div></div><div class="modal-backdrop fade show"></div>');
+                    attachModalEventListeners("Create");
+                });
+            });
+
+            // EDIT: Load Partial into Modal
+            $('#employee-list-body').on('click', '.edit-btn', function (e) {
+                e.preventDefault();
+                var editUrl = $(this).attr('href');
+                var employeeId = $(this).closest('tr').data('employee-id');
+
+                $.get(editUrl, function (data) {
+                    $("#modalContainer").html('<div class="modal fade show" style="display:block;" aria-modal="true" role="dialog"><div class="modal-dialog modal-lg"><div class="modal-content">' + data + '</div></div></div><div class="modal-backdrop fade show"></div>');
+                    attachModalEventListeners("Edit", employeeId);
+                });
+            });
+
+            // DELETE
+            $('#employee-list-body').on('click', '.delete-btn', function () {
+                var employeeId = $(this).data('employee-id');
+                var employeeName = $(this).data('employee-name');
+                if (confirm('Are you sure you want to delete ' + employeeName + '?')) {
+                    $.post('@Url.Action("DeleteEmployee", "Employees")', { id: employeeId })
+                        .done(function (response) {
+                            if (response.success) {
+                                window.location.reload();
+                            } else {
+                                alert('Error deleting employee: ' + response.message);
+                            }
+                        })
+                        .fail(function (xhr) {
+                            
+                            if(xhr.status !== 401 && xhr.status !== 403) {
+                                alert("Delete failed. Server returned status: " + xhr.status);
+                            }
+                        });
+                }
+            });
+
+            function attachModalEventListeners(action = "Create", employeeId = null) {
+                if ($.validator && $.validator.unobtrusive) {
+                    $.validator.unobtrusive.parse("#createEmployeeForm, #editEmployeeForm");
+                }
+
+                $(document).off("click", ".modal-backdrop, .modal .btn-secondary, [data-bs-dismiss='modal']").on("click", ".modal-backdrop, .modal .btn-secondary, [data-bs-dismiss='modal']", function () {
+                    $("#modalContainer").empty();
+                    $('body').removeClass('modal-open');
+                });
+
+                $(document).off("submit", "#createEmployeeForm, #editEmployeeForm").on("submit", "#createEmployeeForm, #editEmployeeForm", function (e) {
+                    e.preventDefault();
+                    var form = $(this);
+                    var formData = new FormData(this);
+                    var url = (form.attr('id') === "createEmployeeForm") ? '@Url.Action("CreateEmployee", "Employees")' : '@Url.Action("EditEmployee", "Employees")';
+
+                    if (employeeId && action === "Edit") {
+                        formData.append("EmployeeId", employeeId);
+                    }
+
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response.success) {
+                                $("#modalContainer").empty();
+                                window.location.reload();
+                            } else {
+                                $("#modalContainer .modal-content").html(response);
+                                attachModalEventListeners(action, employeeId);
+                            }
+                        },
+                        error: function (xhr) {
+                           
+                            if (xhr.status !== 401 && xhr.status !== 403) {
+                                alert("An error occurred while saving.");
+                            }
+                        }
+                    });
+                });
+            }
+        });
+
+        function AddAcademic() {
+            var rowCount = $("#ExTable tbody tr").length;
+            var newRow = `<tr>
+                <td><input type="text" name="AcademicDetails[${rowCount}].DegreeName" class="form-control" /></td>
+                <td><input type="text" name="AcademicDetails[${rowCount}].CGPA" class="form-control" /></td>
+                <td><button type="button" class="btn btn-danger btn-remove">Remove</button></td>
+            </tr>`;
+            $("#ExTable tbody").append(newRow);
+        }
+
+        $(document).on("click", ".btn-remove", function () {
+            $(this).closest('tr').remove();
+            updateAcademicDetailIndices();
+        });
+
+        function updateAcademicDetailIndices() {
+            $("#ExTable tbody tr").each(function (index) {
+                $(this).find("input").each(function () {
+                    var name = $(this).attr("name");
+                    if (name) {
+                        var newName = name.replace(/\[\d+\]/, "[" + index + "]");
+                        $(this).attr("name", newName);
+                    }
+                });
+            });
+        }
+    </script>
+}
